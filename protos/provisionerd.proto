@@ -1,0 +1,82 @@
+// 🐻‍❄️🧊 provisionerd: Deploy VMs with code.
+// Copyright 2023-2024 Noelware, LLC. <team@noelware.org>
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+import "types.proto";
+
+package noelware.provisionerd.v1;
+option java_multiple_files = true;
+option java_package = "org.noelware.provisionerd.protobufs.v1";
+option go_package = "go.noelware.org/protos/generated/provisionerd;provisionerd";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+// `Daemon` service is represented as the `provisionerd` daemon, which is a persistent
+// process in the background that checks the lively hood of all VMs created by the daemon
+// with the specified backend.
+service Daemon {
+    // `Status` will view the status of a specific VM.
+    rpc Status(StatusRequest) returns (StatusResponse);
+
+    // `Create` will create a VM with the given configuration from the HCL-based file.
+    rpc Create(CreateRequest) returns (CreateResponse);
+
+    // `Destroy` will destroy a VM and its resources.
+    rpc Destroy(DestroyRequest) returns (DestroyResponse);
+
+    // `List` returns a list of all VMs created by provisionerd.
+    rpc List(ListRequest) returns (ListResponse);
+
+    // `Ping` is a simple Ping! request to check if the daemon is alive and well.
+    // It also returns the status of the VM backend itself.
+    rpc Ping(PingRequest) returns (PingResponse);
+}
+
+// Represents the request payload for the `Ping` RPC.
+message PingRequest {}
+
+// Represents the response for the `Ping` RPC.
+message PingResponse {
+    // Pong!
+    bool pong = 1;
+}
+
+message ListRequest {
+}
+
+message ListResponse {
+    // List of available VMs based off the contraints of the [`ListRequest`].
+    repeated noelware.provisionerd.v1.VM vms = 1;
+}
+
+message StatusRequest {
+}
+
+message StatusResponse {
+}
+
+message CreateRequest {
+}
+
+message CreateResponse {
+}
+
+message DestroyRequest {
+}
+
+message DestroyResponse {
+}

@@ -1,0 +1,86 @@
+// 🐻‍❄️🧊 provisionerd: Deploy VMs with code.
+// Copyright 2023-2024 Noelware, LLC. <team@noelware.org>
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package noelware.provisionerd.v1;
+option java_multiple_files = true;
+option java_package = "org.noelware.provisionerd.protobufs.v1.types";
+option go_package = "go.noelware.org/protos/generated/provisionerd/types;types";
+
+import "google/protobuf/timestamp.proto";
+
+// Represents what backend this virtual machine is running on.
+enum Backend {
+    // Uses [Libvirt](https://libvirt.org) as the backend.
+    LIBVIRT = 1;
+}
+
+// Represents the VM status.
+enum Status {
+    // The VM is alive! :D
+    ALIVE = 1;
+
+    // The VM has died for some reason :(
+    DEAD = 2;
+
+    // VM is a zombie, while it does exist, it is not responding correctly
+    // for some reason...
+    ZOMBIE = 3;
+
+    // VM is unavailable due to unknown constraints.
+    UNAVAILABLE = 4;
+
+    // VM is unresponsive.
+    UNRESPONSIVE = 5;
+}
+
+// VM describes a virtual machine
+message VM {
+    // UUID representation of this VM exists under provisionerd's persistent data.
+    string id = 1;
+
+    // Name of the VM. It cannot exceed over 32 characters and can only be represented
+    // in alphanumeric characters, `-`, `_`, and `.`
+    string name = 2;
+
+    // List of labels that are attached to this VM.
+    repeated LabelDescriptor labels = 3;
+
+    // What backend this VM belongs to
+    noelware.provisionerd.v1.Backend backend = 4;
+
+    // Status of this VM.
+    noelware.provisionerd.v1.Status status = 5;
+
+    // Creation date as a protobuf timestamp.
+    google.protobuf.Timestamp created = 6;
+
+    // Last modified at timestamp.
+    google.protobuf.Timestamp last_updated = 7;
+}
+
+// Descriptor type of a VM label.
+message LabelDescriptor {
+    // Label name. It cannot exceed over 32 characters and can only be represented
+    // in alphanumeric characters, `-`, `_`, and `.`
+    string name = 1;
+
+    // Description of this label.
+    string description = 2;
+
+    // Label value.
+    string value = 3;
+}
