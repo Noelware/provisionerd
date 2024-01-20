@@ -14,3 +14,12 @@
 // limitations under the License.
 
 pub mod libvirt;
+
+use crate::protos;
+
+/// Represents a provisionerd backend.
+#[async_trait]
+pub trait Backend: Send + Sync {
+    /// Translate this backend into a [`protos::generated::Backend`] enum.
+    fn to_grpc_type(&self) -> protos::generated::Backend;
+}

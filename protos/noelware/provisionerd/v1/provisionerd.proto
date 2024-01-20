@@ -15,13 +15,14 @@
 
 syntax = "proto3";
 
-import "types.proto";
-
 package noelware.provisionerd.v1;
 option java_multiple_files = true;
 option java_package = "org.noelware.provisionerd.protobufs.v1";
 option go_package = "go.noelware.org/protos/generated/provisionerd;provisionerd";
 
+import "noelware/provisionerd/v1/networking.proto";
+import "noelware/provisionerd/v1/disks.proto";
+import "noelware/provisionerd/v1/types.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
 
@@ -56,6 +57,8 @@ message PingResponse {
 }
 
 message ListRequest {
+    // filter string to query VMs by
+    optional string filter = 1;
 }
 
 message ListResponse {
@@ -64,19 +67,88 @@ message ListResponse {
 }
 
 message StatusRequest {
+    // list of IDs to query the status of any VM. If a wildcard (`*`) appears, then it'll
+    // just return the status of all VMs
+    repeated string ids = 1;
 }
 
 message StatusResponse {
+    // List of the statuses of the VMs that were queried.
+    repeated StatusVM vms = 1;
+}
+
+// Status of a specific VM
+message StatusVM {
+    // VM ID
+    string id = 1;
+
+    // name of the VM
+    string name = 2;
+
+    // description of this vm
+    string description = 3;
+
+    // status of the VM
+    noelware.provisionerd.v1.Status status = 4;
+
+    // labels the VM has
+    repeated noelware.provisionerd.v1.LabelDescriptor labels = 5;
 }
 
 message CreateRequest {
+    // Name of the VM. It cannot exceed over 32 characters and can only be represented
+    // in alphanumeric characters, `-`, `_`, and `.`
+    string name = 1;
+
+    // Description of this VM.
+    optional string description = 2;
+
+    // List of labels to attach to this create request.
+    repeated noelware.provisionerd.v1.LabelDescriptor labels = 3;
+
+    // Specifies which backend to use if available. By default, this will provision
+    // in the backend that is initialized by the daemon.
+    optional noelware.provisionerd.v1.Backend backend = 4;
+
+    // Networking configuration for this VM.
+    optional noelware.provisionerd.v1.networking.Networking networking = 5;
+
+    // list of disks to use for the VM, it'll be allocated on the machine.
+    repeated noelware.provisionerd.v1.disks.Disk disks = 6;
 }
 
 message CreateResponse {
+    // It was successful.
+    oneof Success {
+        // returns the UUID of the VM
+        string id = 1;
+    }
+
+    oneof Failure {
+        // why the creation of the VM failed in a humane message
+        string message = 2;
+
+        // more contextual information on why the VM failed to create
+        google.protobuf.Struct details = 3;
+    }
 }
 
 message DestroyRequest {
+    // UUID of the VM to destroy
+    string id = 1;
 }
 
 message DestroyResponse {
+    // It was successful and all allocated resources are free'd.
+    oneof Success {
+        bool acknowledged = 1;
+    }
+
+    oneof Failure {
+        // why the destruction of the VM failed in a humane message
+        string message = 2;
+
+        // more contextual information on why the VM failed to destroy itself
+        google.protobuf.Struct details = 3;
+    }
 }

@@ -20,31 +20,34 @@ option java_multiple_files = true;
 option java_package = "org.noelware.provisionerd.protobufs.v1.types";
 option go_package = "go.noelware.org/protos/generated/provisionerd/types;types";
 
+import "noelware/provisionerd/v1/networking.proto";
+import "noelware/provisionerd/v1/disks.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
 
 // Represents what backend this virtual machine is running on.
 enum Backend {
     // Uses [Libvirt](https://libvirt.org) as the backend.
-    LIBVIRT = 1;
+    LIBVIRT = 0;
 }
 
 // Represents the VM status.
 enum Status {
     // The VM is alive! :D
-    ALIVE = 1;
+    ALIVE = 0;
 
     // The VM has died for some reason :(
-    DEAD = 2;
+    DEAD = 1;
 
     // VM is a zombie, while it does exist, it is not responding correctly
     // for some reason...
-    ZOMBIE = 3;
+    ZOMBIE = 2;
 
     // VM is unavailable due to unknown constraints.
-    UNAVAILABLE = 4;
+    UNAVAILABLE = 3;
 
     // VM is unresponsive.
-    UNRESPONSIVE = 5;
+    UNRESPONSIVE = 4;
 }
 
 // VM describes a virtual machine
@@ -60,16 +63,29 @@ message VM {
     repeated LabelDescriptor labels = 3;
 
     // What backend this VM belongs to
-    noelware.provisionerd.v1.Backend backend = 4;
+    Backend backend = 4;
 
     // Status of this VM.
-    noelware.provisionerd.v1.Status status = 5;
+    Status status = 5;
 
     // Creation date as a protobuf timestamp.
     google.protobuf.Timestamp created = 6;
 
     // Last modified at timestamp.
     google.protobuf.Timestamp last_updated = 7;
+
+    // Configured networking for the VM
+    noelware.provisionerd.v1.networking.Networking networking = 8;
+
+    // List of mounted disks that the VM has access to.
+    repeated noelware.provisionerd.v1.disks.Disk disks = 9;
+
+    // VM image that is being used to run itself. They must be in a HTTP-based URI scheme:
+    //
+    //      default://ubuntu:20.04
+    //         ^         ^     ^
+    //    image pool    os   version (optional)
+    string image = 10;
 }
 
 // Descriptor type of a VM label.
@@ -82,5 +98,5 @@ message LabelDescriptor {
     string description = 2;
 
     // Label value.
-    string value = 3;
+    google.protobuf.Value value = 3;
 }

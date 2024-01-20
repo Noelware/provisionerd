@@ -13,18 +13,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// Generated protobufs.
-pub mod generated {
-    tonic::include_proto!("noelware.provisionerd.v1");
+syntax = "proto3";
 
-    pub mod networking {
-        tonic::include_proto!("noelware.provisionerd.v1.networking");
-    }
+package noelware.provisionerd.v1.image;
+option java_multiple_files = true;
+option java_package = "org.noelware.provisionerd.protobufs.v1.image";
+option go_package = "go.noelware.org/protos/generated/provisionerd/image;image";
 
-    pub mod disks {
-        tonic::include_proto!("noelware.provisionerd.v1.disks");
-    }
+import "google/protobuf/struct.proto";
+
+// Represents a VM image that a VM is using.
+message Image {
+    // The image pool that it is coming from.
+    string pool = 1;
+
+    // The name of the image itself
+    string name = 2;
+
+    // Version of the image.
+    optional string version = 3;
 }
-
-/// Client type for the provisionerd daemon.
-pub type Client = generated::daemon_client::DaemonClient<tonic::transport::Channel>;

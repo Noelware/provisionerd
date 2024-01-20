@@ -13,18 +13,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// Generated protobufs.
-pub mod generated {
-    tonic::include_proto!("noelware.provisionerd.v1");
+syntax = "proto3";
 
-    pub mod networking {
-        tonic::include_proto!("noelware.provisionerd.v1.networking");
-    }
+package noelware.provisionerd.v1.disks;
+option java_multiple_files = true;
+option java_package = "org.noelware.provisionerd.protobufs.v1.disks";
+option go_package = "go.noelware.org/protos/generated/provisionerd/disks;disks";
 
-    pub mod disks {
-        tonic::include_proto!("noelware.provisionerd.v1.disks");
-    }
+// Defines a virtual machine disk that is mounted onto the VM to store the VM contents in.
+message Disk {
+    // Physical path to the VM disk.
+    string path = 1;
+
+    // Size in bytes of the disk itself.
+    int64 size = 2;
 }
-
-/// Client type for the provisionerd daemon.
-pub type Client = generated::daemon_client::DaemonClient<tonic::transport::Channel>;

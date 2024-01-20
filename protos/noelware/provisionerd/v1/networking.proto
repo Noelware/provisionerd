@@ -13,18 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/// Generated protobufs.
-pub mod generated {
-    tonic::include_proto!("noelware.provisionerd.v1");
+syntax = "proto3";
 
-    pub mod networking {
-        tonic::include_proto!("noelware.provisionerd.v1.networking");
-    }
+package noelware.provisionerd.v1.networking;
+option java_multiple_files = true;
+option java_package = "org.noelware.provisionerd.protobufs.v1.networking";
+option go_package = "go.noelware.org/protos/generated/provisionerd/networking;networking";
 
-    pub mod disks {
-        tonic::include_proto!("noelware.provisionerd.v1.disks");
-    }
-}
-
-/// Client type for the provisionerd daemon.
-pub type Client = generated::daemon_client::DaemonClient<tonic::transport::Channel>;
+// Defines the networking of the VM.
+// TODO(@IceeMC): do this for noel pls
+message Networking {}
