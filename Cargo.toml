@@ -46,7 +46,7 @@ clap_complete = "4.4.8"
 cli-table = "0.4.7"
 color-eyre = { version = "0.6.2", features = ["issue-url"] }
 dotenvy = "0.15.7"
-eyre = "0.6.11"
+eyre = "0.6.12"
 hcl-rs = "0.16.7"
 mimalloc = "0.1.39"
 noelware-config = { git = "https://github.com/Noelware/core-rs", version = "0.1.0", features = [
